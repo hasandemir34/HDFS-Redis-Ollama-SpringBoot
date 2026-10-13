@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Employee Management System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            font-family: "Times New Roman", Times, serif;
+            font-weight: bold;
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+        .nav-link {
+            display: inline-block;
+            margin-bottom: 15px;
+            padding: 8px 15px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 2px solid #000;
+            padding: 8px;
+            text-align: left;
+            font-size: 14px;
+        }
+        th {
+            font-weight: bold;
+        }
+        img.emp-img {
+            width: 70px;
+            height: 80px;
+            object-fit: cover;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+<a href="/chat" class="nav-link">🤖 Ollama Chat Sayfasına Git</a>
+
+<h1>EMPLOYEE</h1>
+
+<table>
+    <thead>
+    <tr>
+        <th>EMPNO</th>
+        <th>ENAME</th>
+        <th>JOB</th>
+        <th>MGR</th>
+        <th>HIREDATE</th>
+        <th>SAL</th>
+        <th>COMM</th>
+        <th>DEPT</th>
+        <th>IMG</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="emp : ${employees}">
+        <td th:text="${emp.empno}">7369</td>
+        <td th:text="${emp.ename}">SMITH</td>
+        <td th:text="${emp.job}">CLERK</td>
+        <td th:text="${emp.mgrName}">FORD</td>
+        <td th:text="${emp.hiredate}">17-DEC-1980</td>
+        <td th:text="${emp.sal}">800</td>
+        <td th:text="${emp.comm}"></td>
+        <td th:text="${emp.deptName}">RESEARCH</td>
+        <td>
+            <img class="emp-img"
+                 th:src="@{${hdfsWebUrl} + ${emp.img} + '?op=OPEN'}"
+                 alt="Emp Image"/>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>
