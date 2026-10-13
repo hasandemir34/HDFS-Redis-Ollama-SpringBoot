@@ -12,6 +12,7 @@ import java.util.List;
 public interface EmpRepository extends JpaRepository<Emp, Integer> {
 
     // Tablo ekranı için Self-JOIN (Yönetici Adı) ve Dept JOIN (Departman Adı) içeren sorgu
+    //bu birleştirme ile DTO üretiyorum.
     @Query("SELECT new com.sau.empsystem.dto.EmpDto(" +
             "e.empno, e.ename, e.job, m.ename, e.hiredate, e.sal, e.comm, d.dname, e.img) " +
             "FROM Emp e " +

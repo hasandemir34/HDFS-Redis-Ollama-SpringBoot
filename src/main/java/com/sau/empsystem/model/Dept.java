@@ -14,8 +14,8 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "dept")
-public class Dept implements Serializable {
+@Table(name = "dept") //mysqldeki dept adlı tablo ile eşleniyor.
+public class Dept implements Serializable {  //cache için serializable yazıyoruz
 
     @Id
     @Column(name = "deptno")
@@ -24,6 +24,6 @@ public class Dept implements Serializable {
     @Column(name = "dname")
     private String dname;
 
-    @Column(name = "loc")
+    @Column(name = "loc")  //departman konumu location
     private String loc;
 }

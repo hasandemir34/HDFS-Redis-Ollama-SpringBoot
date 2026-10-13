@@ -19,5 +19,5 @@ public class EmpDto implements Serializable {
     private Integer sal;
     private Integer comm;
     private String deptName;   // Dept JOIN ile gelen departman adı
-    private String img;
+    private String img;  //hdfs resim yolu
 }

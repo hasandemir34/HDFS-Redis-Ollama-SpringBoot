@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
 
 @SpringBootApplication
-@EnableCaching
+@EnableCaching //redis cahce sistemini tüm projede aktif ediyoruz.
 public class EmpSystemApplication {
 
     public static void main(String[] args) {
