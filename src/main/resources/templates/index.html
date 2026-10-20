@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="tr" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Employee Management System</title>
+    <title>Footballer Management System</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -36,7 +36,7 @@
         th {
             font-weight: bold;
         }
-        img.emp-img {
+        img.footballer-img {
             width: 70px;
             height: 80px;
             object-fit: cover;
@@ -48,36 +48,32 @@
 
 <a href="/chat" class="nav-link"> Ollama Sayfasına Git</a>
 
-<h1>EMPLOYEE</h1>
+<h1>FOOTBALLERS</h1>
 
 <table>
     <thead>
     <tr>
-        <th>EMPNO</th>
-        <th>ENAME</th>
-        <th>JOB</th>
-        <th>MGR</th>
-        <th>HIREDATE</th>
-        <th>SAL</th>
-        <th>COMM</th>
-        <th>DEPT</th>
-        <th>IMG</th>
+        <th>ID</th>
+        <th>NAME</th>
+        <th>TEAM</th>
+        <th>CITY</th>
+        <th>SHIRT NUMBER</th>
+        <th>MARKET VALUE</th>
+        <th>PHOTO</th>
     </tr>
     </thead>
     <tbody>
-    <tr th:each="emp : ${employees}">
-        <td th:text="${emp.empno}">7369</td>
-        <td th:text="${emp.ename}">SMITH</td>
-        <td th:text="${emp.job}">CLERK</td>
-        <td th:text="${emp.mgrName}">FORD</td>
-        <td th:text="${emp.hiredate}">17-DEC-1980</td>
-        <td th:text="${emp.sal}">800</td>
-        <td th:text="${emp.comm}"></td>
-        <td th:text="${emp.deptName}">RESEARCH</td>
+    <tr th:each="footballer : ${footballers}">
+        <td th:text="${footballer.footballerid}">1</td>
+        <td th:text="${footballer.full_name}">Victor Osimhen</td>
+        <td th:text="${footballer.teamname}">Galatasaray</td>
+        <td th:text="${footballer.city}">Istanbul</td>
+        <td th:text="${footballer.shirtnumber}">45</td>
+        <td th:text="${footballer.marketvalue}">75000000</td>
         <td>
-            <img class="emp-img"
-                 th:src="@{${hdfsWebUrl} + ${emp.img} + '?op=OPEN'}"
-                 alt="Emp Image"/>
+            <img class="footballer-img"
+                 th:src="@{${hdfsWebUrl} + ${footballer.photo} + '?op=OPEN'}"
+                 alt="Footballer Image"/>
         </td>
     </tr>
     </tbody>

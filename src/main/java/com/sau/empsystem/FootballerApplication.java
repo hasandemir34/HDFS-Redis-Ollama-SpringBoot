@@ -6,10 +6,10 @@ import org.springframework.cache.annotation.EnableCaching;
 
 @SpringBootApplication
 @EnableCaching //redis cahce sistemini tüm projede aktif ediyoruz.
-public class EmpSystemApplication {
+public class FootballerApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(EmpSystemApplication.class, args);
+        SpringApplication.run(FootballerApplication.class, args);
     }
 
 }

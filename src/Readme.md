@@ -1,20 +1,20 @@
-🏢 Employee Management System (Çalışan Yönetim Sistemi)
+🏢 Footballer Management System (Futbolcu Yönetim Sistemi)
 
 Spring Boot 3.2, Redis Caching, Hadoop HDFS ve Local Ollama LLM (llama3.2) teknolojilerini birleştiren kurumsal düzeyde dağıtık web uygulaması.
 
 📌 Proje Hakkında
 
-Bu proje, bir kurumun çalışan ve departman verilerini verimli bir şekilde yönetmek, performans optimizasyonu sağlamak ve modern yapay zeka servislerini sisteme entegre etmek amacıyla geliştirilmiştir.
+Bu proje, futbolcu ve takım verilerini verimli bir şekilde yönetmek, performans optimizasyonu sağlamak ve modern yapay zeka servislerini sisteme entegre etmek amacıyla geliştirilmiştir.
 
 ✨ Temel Özellikler
 
 Katmanlı Mimari (Layered Architecture): Model, DTO, Repository, Service ve Controller katmanları ile modüler kod yapısı.
 
-İlişkisel Veri Birleştirme (JPQL & Self-JOIN): Çalışanların yöneticilerini (MGR) ve departmanlarını (DEPT) ID numaraları yerine isim bazlı gösteren ilişkisel sorgular.
+İlişkisel Veri Birleştirme (JPQL JOIN): Futbolcuların takım adı ve şehir bilgilerini tek DTO sorgusunda getirir.
 
 Yüksek Performanslı Önbellekleme (Redis Caching): @Cacheable anotasyonu ile MySQL veritabanı sorgu sonuçlarının Redis RAM belleğe alınması ve veritabanı yükünün %0'a indirilmesi.
 
-Dağıtık Medya Depolama (Hadoop HDFS): Çalışan profil fotoğraflarının Hadoop dağıtık dosya sisteminde tutulması ve WebHDFS REST API ile tarayıcıya aktarılması.
+Dağıtık Medya Depolama (Hadoop HDFS): Futbolcu fotoğraflarının Hadoop dağıtık dosya sisteminde tutulması ve WebHDFS REST API ile tarayıcıya aktarılması.
 
 Yerel Yapay Zeka Entegrasyonu (Ollama LLM): Bilgisayarda çalışan llama3.2 modeline Spring RestTemplate ile HTTP POST istekleri atılarak geliştirilen sohbet modülü.
 
@@ -50,7 +50,7 @@ Backend: Java 17, Spring Boot 3.2.5, Spring Data JPA, Spring Cache, Spring Web
 
 Build Tool: Gradle 8.x / 9.x
 
-Veritabanı: MySQL Server (scott şeması)
+Veritabanı: MySQL Server (football şeması)
 
 Önbellek: Redis Server
 
@@ -65,23 +65,22 @@ Frontend: HTML5, CSS3, Thymeleaf Template Engine, JavaScript (Fetch API)
 src/main/java/com/sau/empsystem/
 ├── EmpSystemApplication.java    # Ana Çalıştırma ve @EnableCaching Sınıfı
 ├── controller/
-│   └── EmpController.java       # Web ve API Endpoint Yönlendirmeleri
+│   └── FootballerController.java # Web ve API Endpoint Yönlendirmeleri
 ├── dto/
-│   └── EmpDto.java              # JOIN Edilmiş Veri Taşıyıcı Nesne
+│   └── FootballerDto.java       # JOIN Edilmiş Veri Taşıyıcı Nesne
 ├── model/
-│   ├── Dept.java                # JPA Dept Entity
-│   └── Emp.java                 # JPA Emp Entity
+│   ├── Footballer.java          # JPA Footballer Entity
+│   └── Team.java                # JPA Team Entity
 ├── repository/
-│   ├── DeptRepository.java      # JPA Dept Repository
-│   └── EmpRepository.java       # Self-JOIN ve Dept JOIN JPQL Sorgusu
+│   └── FootballerRepository.java # Futbolcu ve takım JOIN JPQL sorgusu
 └── service/
-├── EmpService.java          # Redis Cache Mantığı (@Cacheable / @CacheEvict)
+├── FootballerService.java   # Redis Cache Mantığı (@Cacheable / @CacheEvict)
 └── OllamaService.java       # Ollama Llama 3.2 API Entegrasyonu
 
 src/main/resources/
 ├── application.properties       # Veritabanı, Redis, Hadoop ve Ollama Ayarları
 └── templates/
-├── index.html               # Çalışan Listesi ve Fotoğraf Tablosu
+├── index.html               # Futbolcu Listesi ve Fotoğraf Tablosu
 └── chat.html                # Llama 3.2 Yapay Zeka Chat Arayüzü
 
 
@@ -103,12 +102,11 @@ Ollama AI (ollama run llama3.2 komutu ile indirilmiş olmalı)
 
 2. Veritabanı Hazırlığı
 
-MySQL üzerinde scott veritabanını oluşturun ve yetkili kullanıcıyı tanımlayın:
+MySQL üzerinde football veritabanını oluşturun ve yetkili kullanıcıyı tanımlayın:
 
-CREATE DATABASE scott;
-
-CREATE USER 'scottuser'@'localhost' IDENTIFIED BY 'scottpass';
-GRANT ALL PRIVILEGES ON scott.* TO 'scottuser'@'localhost';
+CREATE DATABASE football;
+CREATE USER 'footballuser'@'localhost' IDENTIFIED BY 'footballpass';
+GRANT ALL PRIVILEGES ON football.* TO 'footballuser'@'localhost';
 FLUSH PRIVILEGES;
 
 
@@ -123,11 +121,11 @@ Hadoop WebHDFS yönlendirmesinin (HTTP 307 Redirect) bilgisayarınızda çözül
 
 src/main/resources/application.properties dosyasındaki ayarların kendi ortamınızla uyumlu olduğunu doğrulayın:
 
-server.port=8090
+server.port=8080
 
 # MySQL
-spring.datasource.url=jdbc:mysql://localhost:3306/scott?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-spring.datasource.username=scottuser
+spring.datasource.url=jdbc:mysql://localhost:3306/football?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+spring.datasource.username=root
 spring.datasource.password=scottpass
 spring.jpa.hibernate.ddl-auto=update
 
@@ -153,11 +151,11 @@ Veya IntelliJ IDEA içerisinde EmpSystemApplication.java sınıfını çalışt�
 
 🖥️ Ekranlar ve Kullanım
 
-Çalışan Listesi Sayfası: http://localhost:8090/
+Futbolcu Listesi Sayfası: http://localhost:8080/
 
-Çalışanlar, yöneticileri, departmanları ve HDFS'ten dinamik yüklenen fotoğrafları ile listelenir.
+Futbolcular, takımları ve HDFS'ten dinamik yüklenen fotoğrafları ile listelenir.
 
-Yapay Zeka Chat Sayfası: http://localhost:8090/chat
+Yapay Zeka Chat Sayfası: http://localhost:8080/chat
 
 Yerel llama3.2 modeli ile anlık sohbet imkanı sunar.
 

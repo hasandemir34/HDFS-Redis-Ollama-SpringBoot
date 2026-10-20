@@ -1,6 +1,10 @@
 package com.sau.empsystem.service;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -22,9 +26,15 @@ public class OllamaService {
             requestBody.put("prompt", prompt);
             requestBody.put("stream", false);
 
-            Map response = restTemplate.postForObject(ollamaUrl, requestBody, Map.class);
-            if (response != null && response.containsKey("response")) {
-                return (String) response.get("response");
+            ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
+                    ollamaUrl,
+                    HttpMethod.POST,
+                    new HttpEntity<>(requestBody),
+                    new ParameterizedTypeReference<>() {
+                    });
+            Map<String, Object> responseBody = response.getBody();
+            if (responseBody != null && responseBody.get("response") instanceof String answer) {
+                return answer;
             }
         } catch (Exception e) {
             return "Ollama Servis Hatası: " + e.getMessage();

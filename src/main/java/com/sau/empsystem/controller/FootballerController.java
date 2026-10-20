@@ -1,10 +1,9 @@
 package com.sau.empsystem.controller;
 
-import com.sau.empsystem.dto.EmpDto;
-import com.sau.empsystem.model.Emp;
-import com.sau.empsystem.service.EmpService;
+import com.sau.empsystem.dto.FootballerDto;
+import com.sau.empsystem.model.Footballer;
+import com.sau.empsystem.service.FootballerService;
 import com.sau.empsystem.service.OllamaService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,13 +13,15 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-public class EmpController {
+public class FootballerController {
 
-    @Autowired
-    private EmpService empService;
+    private final FootballerService footballerService;
+    private final OllamaService ollamaService;
 
-    @Autowired
-    private OllamaService ollamaService;
+    public FootballerController(FootballerService footballerService, OllamaService ollamaService) {
+        this.footballerService = footballerService;
+        this.ollamaService = ollamaService;
+    }
 
     @Value("${hdfs.web.url:http://127.0.0.1:9870/webhdfs/v1/emp_images/}")
     private String hdfsWebUrl;
@@ -29,11 +30,11 @@ public class EmpController {
     // 🌐 WEB ARAYÜZÜ (THYMELEAF) ENDPOINT'LERİ
     // =========================================================
 
-    // Tarayıcı için Ana Sayfa (Çalışan Tablosu)
+    // Tarayıcı için ana sayfa (futbolcu tablosu).
     @GetMapping("/")
     public String index(Model model) {
-        List<EmpDto> employees = empService.getAllEmpDetails();
-        model.addAttribute("employees", employees);
+        List<FootballerDto> footballers = footballerService.getAllFootballerDetails();
+        model.addAttribute("footballers", footballers);
         model.addAttribute("hdfsWebUrl", hdfsWebUrl);
         return "index";
     }
@@ -48,18 +49,18 @@ public class EmpController {
     // 🚀 REST API (POSTMAN) ENDPOINT'LERİ
     // =========================================================
 
-    // 1. Postman GET Testi: Tüm çalışanları JSON olarak döner (Redis Cache Testi)
-    @GetMapping("/api/employees")
+    // 1. Tüm futbolcuları JSON olarak döner (Redis cache testi).
+    @GetMapping("/footballers")
     @ResponseBody
-    public List<EmpDto> getAllEmployeesApi() {
-        return empService.getAllEmpDetails();
+    public List<FootballerDto> getAllFootballersApi() {
+        return footballerService.getAllFootballerDetails();
     }
 
-    // 2. Postman POST Testi: Yeni çalışan ekler (Redis @CacheEvict Temizleme Testi)
-    @PostMapping("/api/employees")
+    // 2. Yeni futbolcu ekler ve Redis cache'ini temizler.
+    @PostMapping("/footballers")
     @ResponseBody
-    public Emp createEmployeeApi(@RequestBody Emp emp) {
-        return empService.saveEmp(emp);
+    public Footballer createFootballerApi(@RequestBody Footballer footballer) {
+        return footballerService.saveFootballer(footballer);
     }
 
     // 3. Postman POST Testi & Web Chat: Yapay Zeka Chat API
