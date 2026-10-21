@@ -8,6 +8,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class FootballerService {
@@ -18,7 +19,6 @@ public class FootballerService {
         this.footballerRepository = footballerRepository;
     }
 
-    // İlk istek veritabanından çekilir ve Redis'e yazılır; sonraki istekler cache'den döner.
     @Cacheable("footballers")
     public List<FootballerDto> getAllFootballerDetails() {
         return footballerRepository.findAllFootballersWithDetails();
@@ -27,5 +27,14 @@ public class FootballerService {
     @CacheEvict(value = "footballers", allEntries = true)
     public Footballer saveFootballer(Footballer footballer) {
         return footballerRepository.save(footballer);
+    }
+
+    public Optional<Footballer> findFootballer(Integer id) {
+        return footballerRepository.findById(id);
+    }
+
+    @CacheEvict(value = "footballers", allEntries = true)
+    public void deleteFootballer(Integer id) {
+        footballerRepository.deleteById(id);
     }
 }

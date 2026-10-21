@@ -92,7 +92,10 @@
         if (!text) return;
 
         // Kullanıcı mesajını ekle
-        chatBox.innerHTML += `<div class="msg user-msg"><b>Sen:</b> ${text}</div>`;
+        const userMessage = document.createElement("div");
+        userMessage.className = "msg user-msg";
+        userMessage.textContent = "Sen: " + text;
+        chatBox.appendChild(userMessage);
         input.value = "";
         btn.disabled = true;
         chatBox.scrollTop = chatBox.scrollHeight;
@@ -113,7 +116,10 @@
             .then(res => res.text())
             .then(response => {
                 document.getElementById("loading").remove();
-                chatBox.innerHTML += `<div class="msg bot-msg"><b>Llama 3.2:</b> ${response}</div>`;
+                const botMessage = document.createElement("div");
+                botMessage.className = "msg bot-msg";
+                botMessage.textContent = "Llama 3.2: " + response;
+                chatBox.appendChild(botMessage);
                 chatBox.scrollTop = chatBox.scrollHeight;
                 btn.disabled = false;
             })
