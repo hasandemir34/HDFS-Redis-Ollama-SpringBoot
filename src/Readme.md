@@ -1,164 +1,76 @@
-🏢 Footballer Management System (Futbolcu Yönetim Sistemi)
+# Footballer Management System
 
-Spring Boot 3.2, Redis Caching, Hadoop HDFS ve Local Ollama LLM (llama3.2) teknolojilerini birleştiren kurumsal düzeyde dağıtık web uygulaması.
+Bu proje, futbolcu ve takım bilgilerini MySQL üzerinde tutan basit bir Spring Boot uygulamasıdır.
+Projenin amacı Redis cache, Hadoop HDFS ve yerel Ollama modelinin aynı uygulamada kullanılmasını göstermektir.
 
-📌 Proje Hakkında
+## Kullanılan teknolojiler
 
-Bu proje, futbolcu ve takım verilerini verimli bir şekilde yönetmek, performans optimizasyonu sağlamak ve modern yapay zeka servislerini sisteme entegre etmek amacıyla geliştirilmiştir.
+- Java 17 ve Spring Boot 3.2.5
+- MySQL ve Spring Data JPA
+- Redis cache
+- Hadoop HDFS / WebHDFS
+- Ollama `llama3.2`
+- Thymeleaf
 
-✨ Temel Özellikler
+## Proje yapısı
 
-Katmanlı Mimari (Layered Architecture): Model, DTO, Repository, Service ve Controller katmanları ile modüler kod yapısı.
-
-İlişkisel Veri Birleştirme (JPQL JOIN): Futbolcuların takım adı ve şehir bilgilerini tek DTO sorgusunda getirir.
-
-Yüksek Performanslı Önbellekleme (Redis Caching): @Cacheable anotasyonu ile MySQL veritabanı sorgu sonuçlarının Redis RAM belleğe alınması ve veritabanı yükünün %0'a indirilmesi.
-
-Dağıtık Medya Depolama (Hadoop HDFS): Futbolcu fotoğraflarının Hadoop dağıtık dosya sisteminde tutulması ve WebHDFS REST API ile tarayıcıya aktarılması.
-
-Yerel Yapay Zeka Entegrasyonu (Ollama LLM): Bilgisayarda çalışan llama3.2 modeline Spring RestTemplate ile HTTP POST istekleri atılarak geliştirilen sohbet modülü.
-
-🏗️ Sistem Mimarisi
-
-                                  ┌──────────────────────────┐
-                                  │      İstemci (Browser)   │
-                                  └────────────┬─────────────┘
-                                               │ (HTTP 8090)
-                                               ▼
-                                  ┌──────────────────────────┐
-                                  │    Spring Boot App       │
-                                  │ (Controller & Service)   │
-                                  └──────┬──────┬─────┬──────┘
-                                         │      │     │
-                 ┌───────────────────────┘      │     └──────────────────────┐
-                 ▼                              ▼                            ▼
-┌──────────────────────────┐   ┌──────────────────────────┐   ┌──────────────────────────┐
-│       MySQL (3306)       │   │    Redis Cache (6379)    │   │   Hadoop HDFS (9870)     │
-│   Relational Database    │   │    In-Memory Caching     │   │  Distributed Media Store │
-└──────────────────────────┘   └──────────────────────────┘   └──────────────────────────┘
-│
-▼ (HTTP 11434)
-┌──────────────────────────┐
-│   Ollama Local AI Server │
-│      (Llama 3.2 Model)   │
-└──────────────────────────┘
-
-
-🛠️ Kullanılan Teknolojiler
-
-Backend: Java 17, Spring Boot 3.2.5, Spring Data JPA, Spring Cache, Spring Web
-
-Build Tool: Gradle 8.x / 9.x
-
-Veritabanı: MySQL Server (football şeması)
-
-Önbellek: Redis Server
-
-Dağıtık Dosya Sistemi: Apache Hadoop 3.3.6 (HDFS & WebHDFS API)
-
-Yapay Zeka (AI): Ollama (llama3.2 modeli)
-
-Frontend: HTML5, CSS3, Thymeleaf Template Engine, JavaScript (Fetch API)
-
-📁 Proje Klasör Yapısı
-
+```text
 src/main/java/com/sau/empsystem/
-├── EmpSystemApplication.java    # Ana Çalıştırma ve @EnableCaching Sınıfı
-├── controller/
-│   └── FootballerController.java # Web ve API Endpoint Yönlendirmeleri
-├── dto/
-│   └── FootballerDto.java       # JOIN Edilmiş Veri Taşıyıcı Nesne
-├── model/
-│   ├── Footballer.java          # JPA Footballer Entity
-│   └── Team.java                # JPA Team Entity
-├── repository/
-│   └── FootballerRepository.java # Futbolcu ve takım JOIN JPQL sorgusu
+├── controller/FootballerController.java
+├── dto/FootballerDto.java
+├── model/Footballer.java
+├── model/Team.java
+├── repository/FootballerRepository.java
 └── service/
-├── FootballerService.java   # Redis Cache Mantığı (@Cacheable / @CacheEvict)
-└── OllamaService.java       # Ollama Llama 3.2 API Entegrasyonu
+    ├── FootballerService.java
+    ├── HdfsService.java
+    └── OllamaService.java
+```
 
-src/main/resources/
-├── application.properties       # Veritabanı, Redis, Hadoop ve Ollama Ayarları
-└── templates/
-├── index.html               # Futbolcu Listesi ve Fotoğraf Tablosu
-└── chat.html                # Llama 3.2 Yapay Zeka Chat Arayüzü
+Ana sayfadaki liste, futbolcu ve takım tablolarının JOIN sorgusu ile hazırlanır.
+Liste sonucu Redis'te cache'lenir. Yeni kayıt, güncelleme, silme veya fotoğraf yükleme işleminden
+sonra liste cache'i temizlenir.
 
+## Gerekli servisler
 
-🚀 Kurulum ve Çalıştırma Adımları
+- MySQL: `localhost:3306`, veritabanı: `football`
+- Redis: `localhost:6379`
+- HDFS NameNode: `hdfs://localhost:9000`
+- WebHDFS: `http://127.0.0.1:9870`
+- Ollama: `http://localhost:11434`
 
-1. Ön Gereksinimler
+MySQL kullanıcı bilgileri ortam değişkenleri ile verilebilir:
 
-Bilgisayarınızda aşağıdaki servislerin yüklü ve çalışır durumda olması gerekmektedir:
+```text
+DB_USERNAME=football_app
+DB_PASSWORD=your_password
+```
 
-Java 17 JDK
+Uygulama ayarları `src/main/resources/application.properties` dosyasındadır.
 
-MySQL Server 8.0+
+## Çalıştırma
 
-Redis Server
+```text
+gradlew.bat bootRun
+```
 
-Hadoop HDFS (NameNode & DataNode)
+Sayfalar:
 
-Ollama AI (ollama run llama3.2 komutu ile indirilmiş olmalı)
+- Futbolcu listesi: `http://localhost:8080/`
+- Ollama chat: `http://localhost:8080/chat`
 
-2. Veritabanı Hazırlığı
+## REST işlemleri
 
-MySQL üzerinde football veritabanını oluşturun ve yetkili kullanıcıyı tanımlayın:
+```text
+GET    /footballers
+GET    /footballers/{id}
+POST   /footballers
+PUT    /footballers/{id}
+DELETE /footballers/{id}
+POST   /footballers/{id}/photo
+POST   /api/chat
+```
 
-CREATE DATABASE football;
-CREATE USER 'footballuser'@'localhost' IDENTIFIED BY 'footballpass';
-GRANT ALL PRIVILEGES ON football.* TO 'footballuser'@'localhost';
-FLUSH PRIVILEGES;
-
-
-3. Windows hosts Dosyası Düzenlemesi (WebHDFS İçin)
-
-Hadoop WebHDFS yönlendirmesinin (HTTP 307 Redirect) bilgisayarınızda çözülebilmesi için C:\Windows\System32\drivers\etc\hosts dosyasının en altına şu satırı ekleyin:
-
-127.0.0.1   hasan.localdomain
-
-
-4. application.properties Konfigürasyonu
-
-src/main/resources/application.properties dosyasındaki ayarların kendi ortamınızla uyumlu olduğunu doğrulayın:
-
-server.port=8080
-
-# MySQL
-spring.datasource.url=jdbc:mysql://localhost:3306/football?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-spring.datasource.username=root
-spring.datasource.password=scottpass
-spring.jpa.hibernate.ddl-auto=update
-
-# Redis
-spring.data.redis.host=localhost
-spring.data.redis.port=6379
-
-# Hadoop HDFS
-hdfs.web.url=http://127.0.0.1:9870/webhdfs/v1/emp_images/
-
-# Ollama LLM
-ollama.api.url=http://localhost:11434/api/generate
-
-
-5. Uygulamayı Çalıştırma
-
-Terminalden projeyi başlatmak için:
-
-./gradlew bootRun
-
-
-Veya IntelliJ IDEA içerisinde EmpSystemApplication.java sınıfını çalıştırabilirsiniz.
-
-🖥️ Ekranlar ve Kullanım
-
-Futbolcu Listesi Sayfası: http://localhost:8080/
-
-Futbolcular, takımları ve HDFS'ten dinamik yüklenen fotoğrafları ile listelenir.
-
-Yapay Zeka Chat Sayfası: http://localhost:8080/chat
-
-Yerel llama3.2 modeli ile anlık sohbet imkanı sunar.
-
-📝 Lisans
-
-Bu proje Sakarya Üniversitesi ders projesi kapsamında eğitim amaçlı geliştirilmiştir.
+Fotoğraf yükleme isteği `multipart/form-data` tipinde ve `file` alanı ile gönderilir.
+Dosya HDFS içindeki `/football` klasörüne yazılır. Ana sayfadaki fotoğraf bağlantısı WebHDFS
+üzerinden bu dosyayı okur.

@@ -22,7 +22,7 @@ public class OllamaService {
     public String chatWithLlama(String prompt) {
         try {
             Map<String, Object> requestBody = new HashMap<>();
-            requestBody.put("model", "llama3.2");
+            requestBody.put("model", "llama3.2:latest");
             requestBody.put("prompt", prompt);
             requestBody.put("stream", false);
 
