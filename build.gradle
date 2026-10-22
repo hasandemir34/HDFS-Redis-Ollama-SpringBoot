@@ -23,7 +23,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis' //redis iletişimi
 
     // Veritabanı Sürücüsü
     runtimeOnly 'com.mysql:mysql-connector-j'
@@ -33,16 +33,6 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     testCompileOnly 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
-
-    // Hadoop HDFS Kütüphaneleri (Log ve çakışma engellemeleri ile)
-    implementation('org.apache.hadoop:hadoop-client:3.3.6') {
-        exclude group: 'org.slf4j', module: 'slf4j-reload4j'
-        exclude group: 'org.slf4j', module: 'slf4j-log4j12'
-    }
-    implementation('org.apache.hadoop:hadoop-common:3.3.6') {
-        exclude group: 'org.slf4j', module: 'slf4j-reload4j'
-        exclude group: 'org.slf4j', module: 'slf4j-log4j12'
-    }
 
     // Test Kütüphaneleri
     testImplementation 'org.springframework.boot:spring-boot-starter-test'

@@ -16,6 +16,6 @@ public interface FootballerRepository extends JpaRepository<Footballer, Integer>
             "f.footballerid, CONCAT(f.name, ' ', f.surname), t.teamname, t.city, " +
             "f.shirtnumber, f.marketvalue, f.photo) " +
             "FROM Footballer f " +
-            "JOIN f.team t")
+            "JOIN f.team t ORDER BY f.footballerid")
     List<FootballerDto> findAllFootballersWithDetails();
 }

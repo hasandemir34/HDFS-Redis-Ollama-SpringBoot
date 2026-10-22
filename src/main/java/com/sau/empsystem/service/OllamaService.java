@@ -1,10 +1,6 @@
 package com.sau.empsystem.service;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -17,27 +13,21 @@ public class OllamaService {
     @Value("${ollama.api.url:http://localhost:11434/api/generate}")
     private String ollamaUrl;
 
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate = new RestTemplate();  //HTTP istemcisi
 
     public String chatWithLlama(String prompt) {
         try {
-            Map<String, Object> requestBody = new HashMap<>();
-            requestBody.put("model", "llama3.2:latest");
-            requestBody.put("prompt", prompt);
-            requestBody.put("stream", false);
-
-            ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
-                    ollamaUrl,
-                    HttpMethod.POST,
-                    new HttpEntity<>(requestBody),
-                    new ParameterizedTypeReference<>() {
-                    });
-            Map<String, Object> responseBody = response.getBody();
-            if (responseBody != null && responseBody.get("response") instanceof String answer) {
-                return answer;
+            Map<String, Object> request = new HashMap<>();
+            request.put("model", "llama3.2:latest");
+            request.put("prompt", prompt);
+            request.put("stream", false);
+//  Ollama'ya POST isteği atar ve dönen JSON yanıtını alır
+            Map response = restTemplate.postForObject(ollamaUrl, request, Map.class);
+            if (response != null && response.get("response") != null) {
+                return response.get("response").toString();
             }
         } catch (Exception e) {
-            return "Ollama Servis Hatası: " + e.getMessage();
+            return "Hata: " + e.getMessage();
         }
         return "Yanıt alınamadı.";
     }

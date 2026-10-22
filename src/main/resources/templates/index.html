@@ -46,7 +46,7 @@
 </head>
 <body>
 
-<a href="/chat" class="nav-link"> Ollama Sayfasına Git</a>
+<a href="/chat" class="nav-link"> Ollama</a>
 
 <h1>FOOTBALLERS</h1>
 
@@ -64,12 +64,12 @@
     </thead>
     <tbody>
     <tr th:each="footballer : ${footballers}">
-        <td th:text="${footballer.footballerid}">1</td>
-        <td th:text="${footballer.full_name}">Victor Osimhen</td>
-        <td th:text="${footballer.teamname}">Galatasaray</td>
-        <td th:text="${footballer.city}">Istanbul</td>
-        <td th:text="${footballer.shirtnumber}">45</td>
-        <td th:text="${footballer.marketvalue}">75000000</td>
+        <td th:text="${footballer.footballerid}"></td>
+        <td th:text="${footballer.full_name}"></td>
+        <td th:text="${footballer.teamname}"></td>
+        <td th:text="${footballer.city}"></td>
+        <td th:text="${footballer.shirtnumber}"></td>
+        <td th:text="${footballer.marketvalue}"></td>
         <td>
             <img class="footballer-img"
                  th:src="@{${hdfsWebUrl} + ${footballer.photo} + '?op=OPEN'}"

@@ -3,37 +3,30 @@ package com.sau.empsystem.controller;
 import com.sau.empsystem.dto.FootballerDto;
 import com.sau.empsystem.model.Footballer;
 import com.sau.empsystem.service.FootballerService;
-import com.sau.empsystem.service.HdfsService;
 import com.sau.empsystem.service.OllamaService;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Controller
 public class FootballerController {
 
     private final FootballerService footballerService;
-    private final HdfsService hdfsService;
     private final OllamaService ollamaService;
+    private final String hdfsWebUrl;
 
-    @Value("${hdfs.web.url}")
-    private String hdfsWebUrl;
-
-    public FootballerController(FootballerService footballerService,
-                                HdfsService hdfsService,
-                                OllamaService ollamaService) {
+    public FootballerController( //hdfs bağlantısı
+            FootballerService footballerService,
+            OllamaService ollamaService,
+            @Value("${hdfs.web.url}") String hdfsWebUrl) {
         this.footballerService = footballerService;
-        this.hdfsService = hdfsService;
         this.ollamaService = ollamaService;
+        this.hdfsWebUrl = hdfsWebUrl;
     }
 
     @GetMapping("/")
@@ -48,7 +41,7 @@ public class FootballerController {
         return "chat";
     }
 
-    @GetMapping("/footballers")
+    @GetMapping("/footballers/all")
     @ResponseBody
     public List<FootballerDto> getAllFootballers() {
         return footballerService.getAllFootballerDetails();
@@ -56,13 +49,11 @@ public class FootballerController {
 
     @GetMapping("/footballers/{id}")
     @ResponseBody
-    public ResponseEntity<Footballer> getFootballer(@PathVariable Integer id) {
-        return footballerService.findFootballer(id)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<Footballer> getFootballerById(@PathVariable Integer id) {
+        return ResponseEntity.of(java.util.Optional.ofNullable(footballerService.findFootballer(id)));
     }
 
-    @PostMapping("/footballers")
+    @PostMapping("/footballers/add")
     @ResponseBody
     public Footballer createFootballer(@RequestBody Footballer footballer) {
         return footballerService.saveFootballer(footballer);
@@ -70,48 +61,25 @@ public class FootballerController {
 
     @PutMapping("/footballers/{id}")
     @ResponseBody
-    public ResponseEntity<Footballer> updateFootballer(@PathVariable Integer id,
-                                                        @RequestBody Footballer footballer) {
-        Optional<Footballer> existing = footballerService.findFootballer(id);
-        if (existing.isEmpty()) {
+    public ResponseEntity<Footballer> updateFootballer(@PathVariable Integer id, @RequestBody Footballer footballer) {
+        if (footballerService.findFootballer(id) != null) {
+            footballer.setFootballerid(id);
+            return ResponseEntity.ok(footballerService.saveFootballer(footballer));
+        } else {
             return ResponseEntity.notFound().build();
         }
-
-        footballer.setFootballerid(id);
-        return ResponseEntity.ok(footballerService.saveFootballer(footballer));
     }
 
     @DeleteMapping("/footballers/{id}")
     @ResponseBody
-    public ResponseEntity<Void> deleteFootballer(@PathVariable Integer id) {
-        if (footballerService.findFootballer(id).isEmpty()) {
-            return ResponseEntity.notFound().build();
+    public ResponseEntity<Map<String, String>> deleteFootballer(@PathVariable Integer id) {
+        if (footballerService.findFootballer(id) == null) {
+            return ResponseEntity.status(404)
+                    .body(Map.of("message", "Futbolcu bulunamadı."));
         }
 
         footballerService.deleteFootballer(id);
-        return ResponseEntity.noContent().build();
-    }
-
-    @PostMapping("/footballers/{id}/photo")
-    @ResponseBody
-    public ResponseEntity<?> uploadPhoto(@PathVariable Integer id,
-                                         @RequestParam("file") MultipartFile file) {
-        Optional<Footballer> existing = footballerService.findFootballer(id);
-        if (existing.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        if (file.isEmpty()) {
-            return ResponseEntity.badRequest().body("Dosya seçilmedi.");
-        }
-
-        try {
-            Footballer footballer = existing.get();
-            footballer.setPhoto(hdfsService.upload(file));
-            return ResponseEntity.ok(footballerService.saveFootballer(footballer));
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Dosya HDFS'e yüklenemedi.");
-        }
+        return ResponseEntity.ok(Map.of("message", "Futbolcu başarıyla silindi."));
     }
 
     @PostMapping("/api/chat")
